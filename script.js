@@ -1,4 +1,7 @@
-// Function to show a specific page and hide others
+// ✅ Add Your Existing API Key Here
+const API_KEY = "AIzaSyA7Wer3jMUqZzKKev5Zqn7NJFXauyzKrg4";
+
+// ✅ Function to show a specific page and hide others
 function showPage(pageId) {
     document.querySelectorAll("div").forEach(div => {
         div.classList.add("hidden");
@@ -6,7 +9,7 @@ function showPage(pageId) {
     document.getElementById(pageId).classList.remove("hidden");
 }
 
-// Handle Login
+// ✅ Handle Login
 function login() {
     let username = document.getElementById("loginUsername").value;
     let password = document.getElementById("loginPassword").value;
@@ -20,77 +23,73 @@ function login() {
     }
 }
 
-// Handle Signup
-function signUp() {
-    let name = document.getElementById("signupName").value;
-    let password = document.getElementById("signupPassword").value;
-
-    if (name && password) {
-        localStorage.setItem("user", name);
-        document.getElementById("userName").innerText = name;
-        showPage("dashboard");
-    } else {
-        alert("Please fill in all fields!");
-    }
-}
-
-// Handle Logout
-function logout() {
-    localStorage.removeItem("user");
-    showPage("landingPage"); // Return to login/signup page
-}
-
-// Save Medical History
+// ✅ Save Medical History Using Your API
 function saveMedicalHistory() {
     let condition = document.getElementById("condition").value;
     let allergies = document.getElementById("allergies").value;
     let medications = document.getElementById("medications").value;
 
     if (condition || allergies || medications) {
-        let historyList = document.getElementById("medicalHistoryList");
-        let listItem = document.createElement("li");
-        listItem.innerText = `Condition: ${condition}, Allergies: ${allergies}, Medications: ${medications}`;
-        
-        // Add delete button
-        let deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "❌";
-        deleteBtn.onclick = function() {
-            historyList.removeChild(listItem);
-        };
-        listItem.appendChild(deleteBtn);
-        
-        historyList.appendChild(listItem);
+        fetch("https://your-api-url.com/saveMedicalHistory", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({
+                username: localStorage.getItem("user"),
+                condition: condition,
+                allergies: allergies,
+                medications: medications
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("Medical history saved!");
+        })
+        .catch(error => {
+            console.error("Error saving data: ", error);
+        });
     } else {
         alert("Please enter medical details!");
     }
 }
 
-// Set Medication Alarm & Save in Local Storage// Set Medication Alarm & Save in Local Storage
+// ✅ Set Medication Alarm & Save Using Your API
 function setAlarm() {
     let medName = document.getElementById("medName").value;
     let medTime = document.getElementById("medTime").value;
 
     if (medName && medTime) {
         let alarm = { name: medName, time: medTime };
-        let alarms = JSON.parse(localStorage.getItem("alarms")) || [];
-        alarms.push(alarm);
-        localStorage.setItem("alarms", JSON.stringify(alarms));
 
-        // Show confirmation message
-        alert(`Alarm set for ${medTime} to take ${medName}!`);
-
-        // Schedule alarm notification
-        scheduleAlarm(alarm);
-
-        // Update the reminders list
-        updateReminders();
+        fetch("https://your-api-url.com/setAlarm", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({
+                username: localStorage.getItem("user"),
+                name: medName,
+                time: medTime
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(`Alarm set for ${medTime} to take ${medName}!`);
+            scheduleAlarm(alarm);
+            updateReminders();
+        })
+        .catch(error => {
+            console.error("Error setting alarm: ", error);
+        });
     } else {
         alert("Please enter medication name and time!");
     }
 }
 
-
-// Function to schedule the alarm
+// ✅ Function to schedule the alarm
 function scheduleAlarm(alarm) {
     let now = new Date();
     let alarmTime = new Date();
@@ -106,29 +105,54 @@ function scheduleAlarm(alarm) {
     }, timeDiff);
 }
 
-// Load and display saved alarms in Reminders
+// ✅ Load Reminders from API
 function updateReminders() {
     let reminderList = document.getElementById("reminderList");
     reminderList.innerHTML = "";
-    let alarms = JSON.parse(localStorage.getItem("alarms")) || [];
 
-    alarms.forEach((alarm, index) => {
-        let listItem = document.createElement("li");
-        listItem.innerText = `Take ${alarm.name} at ${alarm.time}`;
+    fetch("https://your-api-url.com/getReminders", {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${API_KEY}`
+        }
+    })
+    .then(response => response.json())
+    .then(alarms => {
+        alarms.forEach((alarm, index) => {
+            let listItem = document.createElement("li");
+            listItem.innerText = `Take ${alarm.name} at ${alarm.time}`;
 
-        // Add delete button
-        let deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "❌";
-        deleteBtn.onclick = function() {
-            alarms.splice(index, 1);
-            localStorage.setItem("alarms", JSON.stringify(alarms));
-            updateReminders();
-        };
-        listItem.appendChild(deleteBtn);
+            // Add delete button
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "❌";
+            deleteBtn.onclick = function() {
+                deleteReminder(alarm.id);
+            };
+            listItem.appendChild(deleteBtn);
 
-        reminderList.appendChild(listItem);
+            reminderList.appendChild(listItem);
+        });
+    })
+    .catch(error => {
+        console.error("Error loading reminders: ", error);
     });
 }
 
-// Load reminders on page load
+// ✅ Delete Reminder Using Your API
+function deleteReminder(alarmId) {
+    fetch(`https://your-api-url.com/deleteReminder/${alarmId}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${API_KEY}`
+        }
+    })
+    .then(() => {
+        updateReminders();
+    })
+    .catch(error => {
+        console.error("Error deleting reminder: ", error);
+    });
+}
+
+// ✅ Load reminders on page load
 document.addEventListener("DOMContentLoaded", updateReminders);
