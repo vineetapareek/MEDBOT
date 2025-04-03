@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDBOT - Medical Assistance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landingPage">
+        <h1>WELCOME TO MEDBOT</h1>
+        <div class="center-options">
+            <button onclick="showPage('loginPage')">Login</button>
+            <button onclick="showPage('signupPage')">Sign Up</button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="hidden">
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <button class="back-btn" onclick="showPage('landingPage')">Go Back</button>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupPage" class="hidden">
+        <h2>Sign Up</h2>
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <button onclick="signUp()">Sign Up</button>
+        <button class="back-btn" onclick="showPage('landingPage')">Go Back</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <h2>Dashboard</h2>
+        <p>Welcome, <span id="userName"></span>!</p>
+        <button onclick="showPage('medicalHistoryPage')">Medical History</button>
+        <button onclick="showPage('alarmPage')">Alarm</button>
+        <button onclick="showPage('reminderPage')">Reminders</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Medical History -->
+    <div id="medicalHistoryPage" class="hidden">
+        <h2>Medical History</h2>
+        <input type="text" id="condition" placeholder="Condition / Disease">
+        <input type="text" id="allergies" placeholder="Allergies">
+        <input type="text" id="medications" placeholder="Current Medications">
+        <input type="file" id="uploadImage">
+        <button onclick="saveMedicalHistory()">Save</button>
+        <ul id="medicalHistoryList"></ul>
+        <button class="back-btn" onclick="showPage('dashboard')">Go Back</button>
+    </div>
+
+    <!-- Alarm Setup -->
+    <div id="alarmPage" class="hidden">
+        <h2>Set Medication Alarm</h2>
+        <input type="text" id="medName" placeholder="Medication Name">
+        <input type="time" id="medTime">
+        <button onclick="setAlarm()">Set Alarm</button>
+        <button class="back-btn" onclick="showPage('dashboard')">Go Back</button>
+    </div>
+
+    <!-- Reminders -->
+    <div id="reminderPage" class="hidden">
+        <h2>Reminders</h2>
+        <ul id="reminderList"></ul>
+        <button class="back-btn" onclick="showPage('dashboard')">Go Back</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
